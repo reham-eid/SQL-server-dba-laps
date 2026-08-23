@@ -1,0 +1,35 @@
+Plan Cache  inside SQL Server Database Engine  
+
+when you run quey: 
+SELECT * FROM Employees WHERE EmployeeID = 10;
+
+Query
+  ↓
+Parse
+  ↓
+Compile / Optimize
+  ↓
+Execution Plan
+  ↓
+Plan Cache
+  ↓
+Execute
+
+
+Execution Plan stores in Plan Cache
+
+SQL Server Memory
+        │
+        ├── Buffer Pool
+        │
+        ├── Plan Cache
+        │       │
+        │       ├── Plan 1
+        │       ├── Plan 2
+        │       ├── Plan 3
+        │       └── ...
+        │
+        └── Other memory
+
+--if you want to remove cached execution plans  from plan cache.  
+DBCC FREEPROCCACHE;

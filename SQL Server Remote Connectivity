@@ -1,0 +1,78 @@
+SQL Server Remote Connectivity Lab   
+
+                 CLIENT
+                   │
+                   │
+             SQLCMD / SSMS
+                   │
+                   ▼
+             Server IP
+           192.168.1.50
+                   │
+                   ▼
+              TCP Port
+                1433
+                   │
+                   ▼
+          Windows Firewall
+                   │
+                   ▼
+        SQL Server TCP/IP
+                   │
+                   ▼
+          SQL Server Engine
+                   │
+                   ▼
+             Authentication
+                   │
+                   ▼
+             Database Access
+
+1. Check SQL Server Services
+Open SQL Server Configuration Manager.
+
+Check:
+
+SQL Server service → Running 
+SQL Server Browser → needed mainly for Named Instances
+
+2. Enable TCP/IP
+Go to:
+SQL Server Network Configuration → Protocols for <Instance>
+click on it
+Enable   it if it's not
+
+Then open TCP/IP Properties → IP Addresses → IPAll
+
+For a fixed port:
+TCP Dynamic Ports = blank
+TCP Port = 1433
+
+Restart the SQL Server service. 
+
+3. Open the Firewall Port
+Create an Inbound Rule:
+
+Rule Type: Port
+Protocol: TCP
+Port: 1433
+Action: Allow
+
+
+4. Test the Port Remotely
+From the client machine:
+Test-NetConnection 192.168.1.50 -Port 1433
+
+Expected:
+TcpTestSucceeded : True 
+
+5.Test with SQLCMD  with Named Instance  
+--open powershell
+
+Get-Service | Where-Object {$_.DisplayName -like "SQL Server*"} |
+ Select-Object Name, DisplayName, Status
+
+sqlcmd -S .\SQLSERVER2019 -E
+
+
+

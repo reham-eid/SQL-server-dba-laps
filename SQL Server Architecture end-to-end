@@ -1,0 +1,83 @@
+Explain SQL Server Architecture from client request to result  ؟
+
+When a client submits a T-SQL request, the request is sent to SQL Server through a configured connectivity protocol, 
+such as TCP/IP, Named Pipes, or Shared Memory for local connections. SQL Server uses TDS, or Tabular Data Stream,
+to exchange SQL Server requests, commands, and results between the client and the server.
+
+Once the request reaches the Database Engine, the Command Parser parses and validates the T-SQL statement. 
+The Query Optimizer determines an efficient execution strategy and generates an execution plan. 
+SQL Server can store the execution plan in the Plan Cache so it can potentially be reused for subsequent executions. 
+The Query Executor then executes the selected plan and accesses the required data. The result is returned to the client through TDS.
+
+SQL OS provides underlying services that support the Database Engine, including scheduling, memory management, synchronization, workers, and tasks.
+
+
+SO:
+
+Shared Memory / Named Pipes / TCP/IP ⬅️ Connectivity protocols
+TDS ⬅️ SQL Server communication/data protocol
+Parser / Optimizer / Executor ⬅️ Query processing
+SQL OS ⬅️ Internal operating-system-like services inside SQL Server
+
+
+Plan Cache  inside SQL Server Database Engine  
+
+when you run quey: 
+SELECT * FROM Employees WHERE EmployeeID = 10;
+
+                CLIENT
+                  │
+                 TDS
+                  │
+   TCP/IP / Named Pipes / Shared Memory
+                  │
+                  ▼
+              SQL Server
+                  │
+               Parser
+                  │
+                  ▼
+             Optimizer
+                  │
+                  ▼
+             Plan Cache
+             /        \
+          Found       Not Found
+            │             │
+            │        Compile
+            │             │
+            │        New Plan
+            │             │
+            └──────┬──────┘
+                   ▼
+                Executor
+                   │
+                   ▼
+               Data Access
+                   │
+                   ▼
+               Result Set
+                   │
+                  TDS
+                   │
+                   ▼
+                 CLIENT
+
+
+Execution Plan stores in Plan Cache
+
+SQL Server Memory
+        │
+        ├── Buffer Pool: Data / Index Pages
+        │
+        ├── Plan Cache
+        │       │
+        │       ├── Execution Plan 1
+        │       ├── Execution Plan 2
+        │       ├── Execution Plan 3
+        │       └── ...
+        │
+        └── Other memory
+
+--if you want to remove cached execution plans  from plan cache.  
+DBCC FREEPROCCACHE;

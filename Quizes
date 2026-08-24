@@ -1,0 +1,42 @@
+1. How would you move database files to another drive?
+First, I would identify the logical and physical file names using sys.database_files or sys.master_files. 
+Then I would use ALTER DATABASE ... MODIFY FILE to change the file paths. 
+After that, I would take the database offline or stop SQL Server as required, 
+move the physical files to the new location, and bring the database back online. I would then verify that all files are accessible from the new paths.
+
+2. Can you use Detach and Attach to move a database?
+Yes. Detach and Attach can be used to move a user database. 
+I would first detach the database, move the MDF, NDF, and LDF files to the new location, 
+and then attach the database from the new file paths. However, I would normally prefer a planned file-move procedure using 
+ALTER DATABASE when appropriate, especially in production environments.
+
+3. Can you use Detach and Attach for system databases?
+No, not in the same way as a normal user database. System databases such as master, model, msdb, and tempdb are critical to
+SQL Server and should not be detached like a user database. 
+Moving system database files requires a specific procedure for each system database.
+
+4. Can you take a backup of tempdb?
+No. tempdb cannot be backed up like a normal user database. Its contents are temporary, 
+and SQL Server recreates tempdb every time the instance starts. 
+Therefore, there is no need to restore its previous contents after a restart.
+
+5. What happens during SQL Server crash recovery?
+During crash recovery, SQL Server uses the transaction log to recover the database. 
+The recovery process consists of three main phases: Analysis, Redo, and Undo. 
+Analysis determines the state of transactions at the time of the crash, Redo reapplies required changes, 
+and Undo rolls back incomplete or uncommitted transactions.
+
+6. Which database does not go through normal crash recovery after a restart?
+tempdb is different because it is recreated every time SQL Server starts. 
+Its previous contents do not need to be recovered. User databases and 
+the other persistent system databases can require recovery using their transaction logs.
+
+7. Which system database is critical for SQL Server startup?
+The master database is critical because SQL Server needs master to start the instance 
+and access important system-level metadata and configuration information. 
+If master is unavailable or cannot be recovered, SQL Server cannot start normally.
+
+8. How can you prove which databases are initialized during startup?
+I would not rely only on memory. I would verify it using the SQL Server Error Log. 
+The startup messages show the databases being initialized or started. 
+I can also query sys.databases after startup and check the state of the system databases.

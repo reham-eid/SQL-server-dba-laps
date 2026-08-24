@@ -63,9 +63,6 @@ SELECT * FROM Employees WHERE EmployeeID = 10;
                    ▼
                  CLIENT
 
-
-Execution Plan stores in Plan Cache
-
 SQL Server Memory
         │
         ├── Buffer Pool: Data / Index Pages
@@ -81,3 +78,15 @@ SQL Server Memory
 
 --if you want to remove cached execution plans  from plan cache.  
 DBCC FREEPROCCACHE;
+
+## Execution Plan stores in Plan Cache
+## plan cache uses LRU algorithm to delete the plans which are not being used for so long time
+
+
+CHECKPOINT
+→ Writes dirty pages as part of checkpoint processing
+→ Helps reduce crash-recovery work
+
+LAZY WRITER
+→ Memory management
+→ Helps reclaim/reuse buffers under memory pressure

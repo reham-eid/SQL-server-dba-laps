@@ -1,0 +1,33 @@
+1-Atomicity  : All or Nothing.  
+
+Transaction as single unit of work.  
+
+Transaction
+   │
+   ├── Operation 1
+   ├── Operation 2
+   └── Operation 3
+
+IF Any operation fails 
+   ↓
+ROLLBACK
+   ↓
+Nothing from the transaction remains
+**
+2-Consistency  
+transaction must remain their rules / constraints / integrity.  
+**
+3-Isolation  :  controls how concurrent transactions interact with each other and what changes one transaction can see from another.
+No interference  with concurrent transactions  
+**
+4-Durability :
+Once a transaction is committed, its changes must survive a failure such as a SQL Server restart.
+BY: Write-Ahead Logging (WAL)  
+
+SO
+How does SQL Server support ACID?
+SQL Server uses transaction management and recovery mechanisms for atomicity, 
+constraints and integrity mechanisms for consistency, 
+locking and isolation-level mechanisms for isolation, 
+and the transaction log with Write-Ahead Logging for durability.
+

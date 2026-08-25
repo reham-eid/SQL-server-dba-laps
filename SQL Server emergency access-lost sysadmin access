@@ -1,0 +1,79 @@
+Nobody has sysadmin permissions and the previous DBA has left. The client needs a backup. What would you do?
+
+On-Prem SQL Server
+        │
+        ├── SA account exists
+        ├── DBA accounts exist
+        └── BUT...
+             No one has sysadmin access
+
+First, I would not try to bypass security. 
+I would obtain authorized Windows administrator access to the SQL Server host through the organization's emergency access process. 
+Then, if necessary, I would start the SQL Server instance in single-user mode and connect using Windows authentication to regain administrative access. 
+I could then enable or reset the sa account, or preferably create an appropriate DBA login or Windows group and grant the required server-level permissions. 
+After restoring administrative access, I would restart SQL Server normally, connect again, perform the database backup, and verify the backup using RESTORE VERIFYONLY.
+===============================
+Flow:
+
+Old DBA leaves
+       ↓
+No sysadmin login available
+       ↓
+Cannot connect to SQL Server
+       ↓
+Client needs backup
+       ↓
+Get authorized Windows Administrator access
+       ↓
+Start SQL Server in Single-User Mode
+       ↓
+Connect using Windows authentication
+       ↓
+Restore administrative access
+       ↓
+Enable/reset SA OR create proper DBA login
+       ↓
+Restart SQL Server normally
+       ↓
+Connect normally
+       ↓
+BACKUP DATABASE
+       ↓
+RESTORE VERIFYONLY
+===============================
+
+open SQL Server Configuration Manager  
+stop SQL Server Agent  -- To prevent SQL Server Agent from taking the single connection.
+
+open Properties of SQL Server  
+
+SQL Server (MSSQLSERVER) --Right-click   
+   ↓
+Properties
+   ↓
+Startup Parameters
+
+--add Single-User parameter  like this
+   ↓ 
+ -m  
+it means Start SQL Server in single-user mode.  
+   ↓ 
+Restart SQL Server  
+        ↓
+Connect immediately with SSMS using Windows authentication
+        ↓
+Change / enable sa OR create DBA login
+ALTER LOGIN sa ENABLE;
+SELECT
+    name,
+    is_disabled
+FROM sys.sql_logins
+WHERE name = 'sa'; --0
+ALTER LOGIN sa
+WITH PASSWORD = 'StrongPasswordHere';
+        ↓
+   Remove -m
+        ↓
+Restart SQL Server normally
+
+

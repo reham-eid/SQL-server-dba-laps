@@ -1,0 +1,113 @@
+SQL Server HA / DR / Data Distribution
+
+I have 5 ways to protect DB from failure:
+
+1- Log Shipping
+--Purpose: Mainly Disaster Recovery.
+A Primary Server continuously takes transaction log backups. These log backups are copied to one or more Secondary Servers and restored there.
+
+--Failover:
+Log Shipping normally requires manual failover.
+So:
+Log Shipping is primarily a DR solution, not automatic HA.
+
+2-Always On Availability Groups 
+--Purpose: High Availability + Disaster Recovery.
+
+An Availability Group contains one or more databases and multiple replicas.
+              Availability Group
+                     |
+          ┌──────────┴──────────┐
+          ↓                     ↓
+   Primary Replica       Secondary Replica
+          |                     |
+       Read/Write          Read-only / DR
+
+You can have multiple secondary replicas:
+Primary    ── READ/WRITE
+Secondary1 ── READ
+Secondary2 ── READ
+
+--Failover:
+Depending on the configuration, Always On AG can provide:
+Automatic failover
+Manual failover
+Synchronous or asynchronous data movement
+Readable secondary replicas
+
+3-Database Mirroring --deprecated
+
+4-Failover Cluster Instance (FCI)
+--Purpose: High Availability at the SQL Server instance level.
+An FCI uses:
+
+             Shared Storage
+                  |
+          ┌───────┴───────┐
+          ↓               ↓
+       Node 1           Node 2
+          |               |
+          └── SQL Server ─┘
+
+**Only one node actively owns the SQL Server instance at a time.
+
+For example:
+Node 1
+   ↓
+SQL Server Instance
+   ↓
+Active
+
+If Node 1 fails:
+Node 1 ❌
+   ↓
+Failover
+   ↓
+Node 2
+   ↓
+SQL Server Instance
+   ↓
+Active
+
+Important difference"
+->FCI protects the SQL Server instance.
+->Always On AG protects databases through replicas.
+
+Also:
+FCI traditionally relies on shared storage, while AG replicas have independent storage.
+
+5-Replication
+Purpose: Mainly data distribution, not traditional HA/failover.
+Publisher: The source database where changes occur.
+    |
+    ↓
+Distributor: Handles the distribution of replicated changes.
+    |
+    ↓
+Subscriber: Receives and applies the changes.
+
+For Transactional Replication, the Log Reader Agent reads relevant changes from 
+the Publisher's transaction log and sends replication commands through the Distributor to the Subscriber.
+
+Important:
+Replication is not the same as Log Shipping.
+=========================================================================================================================================================================
+| Technology         | Main purpose      |
+| ------------------ | ----------------- |
+| Log Shipping       | DR                |
+| Always On AG       | HA + DR           |
+| Database Mirroring | Legacy HA/DR      |
+| FCI                | Instance-level HA |
+| Replication        | Data distribution |
+=========================================================================================================================================================================
+What HA/DR solution would you choose?
+It depends on the business requirements. For high availability with automatic failover, I would consider Always On Availability Groups. 
+For a simpler disaster recovery solution, I could use Log Shipping. 
+Transaction Replication is mainly used for distributing data to subscribers, such as reporting systems, rather than providing database failover.
+
+Can Always On and Log Shipping be used together?
+
+Yes, they can be used together in certain architectures. 
+For example, Availability Groups can provide high availability between replicas, while Log Shipping can provide an additional disaster recovery copy at another location. 
+The exact design depends on the SQL Server version, topology, RPO, RTO, and business requirements.
+

@@ -1,0 +1,14 @@
+ What is Write-Ahead Logging?
+Write-Ahead Logging means that SQL Server writes the transaction log records to the transaction log 
+before the corresponding modified data pages are written to the data files. 
+This ensures that the log contains the information required for recovery in case of a failure.
+
+A transaction can be committed once the required log records have been hardened to the transaction log, 
+even though the modified data pages may still be in the buffer pool and written to the data files later.
+
+WAL
+→ Protect/recover transaction changes
+
+Checkpoint
+→ Flush dirty pages toward data files
+→ Helps define/reduce recovery work

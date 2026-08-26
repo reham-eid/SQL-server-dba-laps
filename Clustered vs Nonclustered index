@@ -16,6 +16,11 @@ ON Employees(EmployeeID);
 
 --so According to the order of the EmployeeID (the clustered key), the rows are organized on data pages within the data files.
 
+What is a Heap in SQL Server?
+A heap is a table without a clustered index. Once we create a clustered index on the table, it is no longer considered a heap. 
+The clustered index organizes the data according to its key, while a heap does not have a clustered index to define the organization of its data pages.
+
+
 Nonclustered:
 A nonclustered index is a separate index structure that contains the index key and a row locator that points to the underlying data.
 

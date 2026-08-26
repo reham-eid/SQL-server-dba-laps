@@ -1,0 +1,28 @@
+Clustered:
+A clustered index determines the order of the data rows/pages in the table, and the table's data is stored at the leaf level of the clustered index.
+
+Example:
+Employees
+
+EmployeeID | Name  | Salary
+-----------|-------|-------
+5          | Ahmed | 10000
+2          | Sara  | 8000
+9          | Mona  | 12000
+1          | Ali   | 7000
+
+CREATE CLUSTERED INDEX IX_Employees
+ON Employees(EmployeeID);
+
+--so According to the order of the EmployeeID (the clustered key), the rows are organized on data pages within the data files.
+
+Nonclustered:
+A nonclustered index is a separate index structure that contains the index key and a row locator that points to the underlying data.
+
+Key points:
+1-A table can have only one clustered index.
+2-A table can have multiple nonclustered indexes.
+3-A Primary Key creates a unique clustered index by default if a clustered index does not already exist and no index type is specified.
+4-A clustered index stores the table data at its leaf level.
+5-A nonclustered index is a separate structure containing keys and row locators.
+6-Indexes can improve read performance, but they add overhead to INSERT, UPDATE, and DELETE operations.
